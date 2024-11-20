@@ -3,12 +3,15 @@ package dev.tonimatas.fixermc;
 import com.formdev.flatlaf.FlatDarkLaf;
 import dev.tonimatas.fixermc.gui.FixerMenuBar;
 import dev.tonimatas.fixermc.gui.FixerPanel;
+import dev.tonimatas.fixermc.sessions.AccountManager;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class FixerMC extends JFrame {
     public static void launch() {
+        AccountManager.loadAccounts();
+
         try {
             UIManager.setLookAndFeel(new FlatDarkLaf());
         } catch (UnsupportedLookAndFeelException e) {
