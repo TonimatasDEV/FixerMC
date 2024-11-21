@@ -18,8 +18,7 @@ public class FixerMC extends JFrame {
             throw new RuntimeException(e);
         }
         
-        JFrame frame = new FixerMC();
-        frame.add(new FixerPanel(), BorderLayout.CENTER);
+        new FixerMC();
     }
     
     public FixerMC() {
@@ -29,6 +28,7 @@ public class FixerMC extends JFrame {
         setResizable(false);
         setLayout(new BorderLayout());
         setJMenuBar(new FixerMenuBar());
+        setContentPane(new FixerPanel());
         setVisible(true);
     }
 }

@@ -20,11 +20,9 @@ public class Main {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        
-        AuthInfos authInfos = new AuthInfos(javaSession.getMcProfile().getName(), javaSession.getMcProfile().getMcToken().getAccessToken(), javaSession.getMcProfile().getId().toString());
 
         try {
-            NoFramework noFramework = new NoFramework(Constants.PROFILES_FOLDER.resolve("1.21.3"), authInfos, getProfileGameFolder("1.21.3"));
+            NoFramework noFramework = new NoFramework(Constants.PROFILES_FOLDER.resolve("1.21.3"), AccountManager.accounts.get(AccountManager.selectedAccount).getAuthInfos(), getProfileGameFolder("1.21.3"));
 
             noFramework.launch("1.21.3", "", NoFramework.ModLoader.VANILLA);
         } catch (Exception e) {
