@@ -1,7 +1,7 @@
 plugins {
     java
     application
-    //id("org.openjfx.javafxplugin") version "0.1.0"
+    id("com.github.johnrengelman.shadow") version "8.0.0"
 }
 
 group = "dev.tonimatas"
@@ -18,17 +18,14 @@ dependencies {
     implementation("fr.flowarg:openlauncherlib:3.2.11")
     implementation("net.raphimc:MinecraftAuth:4.1.1")
     implementation("com.formdev:flatlaf:3.5.2")
-    //implementation("org.openjfx:javafx-controls:23")
-    //implementation("org.openjfx:javafx-fxml:23")
-    //implementation("org.openjfx:javafx-web:23")
 }
 
 application {
     mainClass = "dev.tonimatas.fixermc.Main"
 }
 
-
-//javafx {
-//    version = "23"
-//    modules = listOf("javafx.controls", "javafx.fxml", "javafx.web")
-//}
+tasks.jar {
+    manifest {
+        attributes["Main-Class"] = "dev.tonimatas.fixermc.Main"
+    }
+}

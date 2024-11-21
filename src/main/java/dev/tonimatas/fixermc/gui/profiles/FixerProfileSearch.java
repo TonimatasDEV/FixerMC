@@ -4,9 +4,9 @@ import javax.swing.*;
 import java.awt.*;
 
 public class FixerProfileSearch extends JScrollPane {
-    private final static int squareSize = 80;
+    private final static int squareSize = 160;
     private final static int squareSpacing = 15;
-    private final static int columns = 7;
+    private final static int columns = 4;
     
     public FixerProfileSearch() {
         setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
@@ -15,7 +15,7 @@ public class FixerProfileSearch extends JScrollPane {
         setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         getVerticalScrollBar().setUnitIncrement(7);
         
-        int totalSquares = 1 + 1;
+        int totalSquares = 15 + 1;
         int rows = (int) (Math.ceil((double) totalSquares / columns));
         
         if (rows < 5) {
@@ -45,9 +45,6 @@ public class FixerProfileSearch extends JScrollPane {
             JPanel profile = new JPanel();
             contentPanel.add(profile);
         }
-        
-        
-        
 
         setViewportView(contentPanel);
     }
