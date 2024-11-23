@@ -11,6 +11,7 @@ import java.awt.event.MouseListener;
 public class ProfileView extends JPanel {
     public final String profileName;
     private final JButton playKill;
+    public boolean isRunning = false;
 
     public ProfileView(String profile) {
         super(new GridBagLayout());
@@ -44,13 +45,13 @@ public class ProfileView extends JPanel {
 
         profileNameArea.addMouseListener(mouseActionListener(this));
 
-        playKill.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                playKill.setText("Kill");
-                playKill.setBackground(Color.RED.darker());
-            }
+        playKill.addActionListener(a -> {
+            playKill.setText("Kill");
+            playKill.setBackground(Color.RED.darker());
+            isRunning = true;
+        });
 
+        playKill.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseExited(MouseEvent e) {
                 if (ProfileView.this.playKill.getText().equals("Play")) {
