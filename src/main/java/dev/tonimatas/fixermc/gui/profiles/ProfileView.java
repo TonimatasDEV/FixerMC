@@ -6,57 +6,80 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class ProfileView extends JPanel {
     public final String profileName;
     private final JButton playKill;
     
     public ProfileView(String profile) {
-        super(new BorderLayout());
+        super(new GridBagLayout());
         this.profileName = profile;
-        
+
         setBackground(Color.BLACK);
-        setEnabled(true);
-        setOpaque(true);
         setFocusable(true);
         
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+        
+        JTextArea profileNameArea = new JTextArea(this.profileName);
+        profileNameArea.setEditable(false);
+        profileNameArea.setFocusable(false);
+        profileNameArea.setForeground(Color.WHITE);
+        profileNameArea.setBackground(Color.BLACK);
+        profileNameArea.setWrapStyleWord(true);
+        profileNameArea.setLineWrap(true);
+        add(profileNameArea, gbc);
+
         playKill = new JButton("Play");
         playKill.setVisible(false);
+        playKill.setFont(playKill.getFont().deriveFont(Font.BOLD).deriveFont(16f));
         playKill.setBackground(Color.GREEN.darker().darker());
-        add(playKill, BorderLayout.SOUTH);
+        gbc.gridy = 1;
+        gbc.weighty = 0.08;
+        add(playKill, gbc);
 
+        profileNameArea.addMouseListener(mouseActionListener(this));
+        
         playKill.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseExited(MouseEvent e) {
-                playKill.setVisible(false);
-            }
-        });
-
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                ProfileManager.setSelectedProfile(ProfileView.this);
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                ProfileView.this.playKill.setVisible(true);
+            public void mousePressed(MouseEvent e) {
+                playKill.setText("Kill");
+                playKill.setBackground(Color.RED.darker());
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                if (!playKill.getBounds().contains(e.getPoint())) {
-                    ProfileView.this.playKill.setVisible(false);
+                if (ProfileView.this.playKill.getText().equals("Play")) {
+                    playKill.setVisible(false);
                 }
             }
         });
 
-        JTextArea profileName = new JTextArea(this.profileName);
-        profileName.setEditable(false);
-        profileName.setFocusable(false);
-        profileName.setBackground(null);
-        profileName.setWrapStyleWord(true);
-        profileName.setLineWrap(true);
-        add(profileName, BorderLayout.NORTH);
+        addMouseListener(mouseActionListener(this));
+    }
+    
+    private static MouseListener mouseActionListener(ProfileView profileView) {
+        return new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                ProfileManager.setSelectedProfile(profileView);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                profileView.playKill.setVisible(true);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                if (!profileView.playKill.getBounds().contains(e.getPoint()) && profileView.playKill.getText().equals("Play")) {
+                    profileView.playKill.setVisible(false);
+                }
+            }
+        };
     }
 }

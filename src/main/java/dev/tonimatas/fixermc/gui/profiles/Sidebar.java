@@ -28,8 +28,8 @@ public class Sidebar extends JPanel {
 
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.weightx = 1.0; // Expandir horizontalmente
-        gbc.weighty = 0.6; // 80% del espacio vertical
+        gbc.weightx = 1.0;
+        gbc.weighty = 0.6;
         add(textArea, gbc);
     }
     
