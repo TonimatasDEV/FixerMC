@@ -28,4 +28,13 @@ public class FixerUtils {
             return new ImageIcon(imageIconURL);
         }
     }
+
+    public static boolean hasLetter(String input) {
+        for (char character : input.toCharArray()) {
+            if (Character.isLetter(character)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

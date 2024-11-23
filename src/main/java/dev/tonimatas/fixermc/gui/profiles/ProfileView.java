@@ -1,19 +1,19 @@
 package dev.tonimatas.fixermc.gui.profiles;
 
-import dev.tonimatas.fixermc.profiles.Profile;
+import dev.tonimatas.fixermc.profiles.ProfileManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-public class FixerProfile extends JPanel {
-    public final Profile profile;
+public class ProfileView extends JPanel {
+    public final String profileName;
     private final JButton playKill;
     
-    public FixerProfile(Profile profile) {
+    public ProfileView(String profile) {
         super(new BorderLayout());
-        this.profile = profile;
+        this.profileName = profile;
         
         setBackground(Color.BLACK);
         setEnabled(true);
@@ -35,25 +35,23 @@ public class FixerProfile extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
-                FixerProfileSearch.setSelectedProfile(FixerProfile.this);
+                ProfileManager.setSelectedProfile(ProfileView.this);
             }
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                FixerProfile.this.playKill.setVisible(true);
+                ProfileView.this.playKill.setVisible(true);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
                 if (!playKill.getBounds().contains(e.getPoint())) {
-                    FixerProfile.this.playKill.setVisible(false);
+                    ProfileView.this.playKill.setVisible(false);
                 }
             }
         });
-        
-        
 
-        JTextArea profileName = new JTextArea("ATM To The Sky - 9");
+        JTextArea profileName = new JTextArea(this.profileName);
         profileName.setEditable(false);
         profileName.setFocusable(false);
         profileName.setBackground(null);

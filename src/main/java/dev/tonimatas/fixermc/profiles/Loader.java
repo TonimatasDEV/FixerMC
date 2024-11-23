@@ -1,11 +1,7 @@
 package dev.tonimatas.fixermc.profiles;
 
 public enum Loader {
-    VANILLA("Vanilla"),
-    FORGE("Forge"),
-    NEOFORGE("NeoForge"),
-    FABRIC("Fabric"),
-    QUILT("Quilt");
+    VANILLA("Vanilla");
     
     
     public final String name;
