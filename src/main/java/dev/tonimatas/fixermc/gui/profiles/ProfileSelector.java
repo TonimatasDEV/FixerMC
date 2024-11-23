@@ -10,7 +10,7 @@ public class ProfileSelector extends JScrollPane {
     private final static int squareSize = 160;
     private final static int squareSpacing = 15;
     private final static int columns = 4;
-    
+
     public ProfileSelector() {
         setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
         setPreferredSize(new Dimension(750, 0));
@@ -19,11 +19,11 @@ public class ProfileSelector extends JScrollPane {
         getVerticalScrollBar().setUnitIncrement(7);
         resetView();
     }
-    
+
     public void resetView() {
         removeAll();
         ProfileManager.profilesViews.clear();
-        
+
         int profilesCount = ProfileManager.profiles.size() + 6;
         int rows = (int) (Math.ceil((double) profilesCount / columns));
 
@@ -33,7 +33,7 @@ public class ProfileSelector extends JScrollPane {
 
         int contentHeight = rows * (squareSize + squareSpacing) + 6;
 
-        JPanel contentPanel  = new JPanel(null);
+        JPanel contentPanel = new JPanel(null);
         contentPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 15));
         contentPanel.setLayout(new GridLayout(rows, columns, 15, 15));
         contentPanel.setPreferredSize(new Dimension(500, contentHeight));

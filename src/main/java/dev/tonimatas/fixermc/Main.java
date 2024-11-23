@@ -11,7 +11,7 @@ public class Main {
         } else {
             LibraryInstaller.init();
         }
-        
+
         FixerMC.launch();
     }
 }

@@ -20,7 +20,7 @@ public class Constants {
     public static final String MINECRAFT_VERSION_MANIFEST;
     public static final String VERSION;
     public static final Path LIBRARY_CHECK_FILE;
-    
+
     static {
         PROGRAM_FOLDER = Paths.get(System.getProperty("user.home"), "AppData", "Local", "Programs", "FixerMC");
         PROGRAM_LIBRARIES = PROGRAM_FOLDER.resolve("libraries");
@@ -33,14 +33,14 @@ public class Constants {
         MINECRAFT_NATIVES = MINECRAFT_FOLDER.resolve("natives");
         MINECRAFT_VERSIONS = MINECRAFT_FOLDER.resolve("versions");
         MINECRAFT_VERSION_MANIFEST = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
-        
+
         Properties fixerProperties = new Properties();
         String versionResult;
         try {
             InputStream propertiesFile = Constants.class.getResourceAsStream("/fixer.properties");
             if (propertiesFile != null) {
                 fixerProperties.load(propertiesFile);
-                
+
                 versionResult = fixerProperties.getProperty("VERSION");
             } else {
                 versionResult = "null";
@@ -49,7 +49,7 @@ public class Constants {
             versionResult = "null";
             System.out.println("Error loading FixerMC properties");
         }
-        
+
         VERSION = versionResult;
         LIBRARY_CHECK_FILE = PROGRAM_LIBRARIES.resolve(VERSION);
     }

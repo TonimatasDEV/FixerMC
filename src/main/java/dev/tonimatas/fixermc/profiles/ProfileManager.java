@@ -22,21 +22,21 @@ public class ProfileManager {
     public static String selectedProfile = null;
     public static Map<String, Profile> profiles = new HashMap<>();
     public static Map<String, ProfileView> profilesViews = new HashMap<>();
-    
+
     public static void setSelectedProfile(ProfileView profileView) {
         profileView.setBorder(BorderFactory.createLineBorder(Color.RED));
 
         Profile profile = profiles.get(profileView.profileName);
         selectedProfile = profile.name;
         MainTab.profileInfo.resetView(profile);
-        
+
         for (ProfileView otherProfileView : ProfileManager.profilesViews.values()) {
             if (!otherProfileView.equals(profileView)) {
                 otherProfileView.setBorder(null);
             }
         }
     }
-    
+
     public static void save() {
         JsonObject profilesJson = new JsonObject();
 
@@ -46,7 +46,7 @@ public class ProfileManager {
         for (Profile profile : profiles.values()) {
             profilesArray.add(FixerMC.GSON.toJsonTree(profile));
         }
-        
+
         profilesJson.add("profiles", profilesArray);
 
         try {
@@ -57,7 +57,7 @@ public class ProfileManager {
             System.out.println("Error saving profiles.");
         }
     }
-    
+
     public static void load() {
         if (!Files.exists(Constants.PROFILES_JSON)) return;
         try (FileReader reader = new FileReader(Constants.PROFILES_JSON.toFile())) {
@@ -67,7 +67,7 @@ public class ProfileManager {
 
             for (JsonElement element : jsonFile.get("profiles").getAsJsonArray().asList()) {
                 Profile profile = FixerMC.GSON.fromJson(element, Profile.class);
-                
+
                 profiles.put(profile.name, profile);
             }
         } catch (IOException e) {

@@ -11,20 +11,20 @@ import java.awt.event.MouseListener;
 public class ProfileView extends JPanel {
     public final String profileName;
     private final JButton playKill;
-    
+
     public ProfileView(String profile) {
         super(new GridBagLayout());
         this.profileName = profile;
 
         setBackground(Color.BLACK);
         setFocusable(true);
-        
+
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
         gbc.fill = GridBagConstraints.BOTH;
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
-        
+
         JTextArea profileNameArea = new JTextArea(this.profileName);
         profileNameArea.setEditable(false);
         profileNameArea.setFocusable(false);
@@ -43,7 +43,7 @@ public class ProfileView extends JPanel {
         add(playKill, gbc);
 
         profileNameArea.addMouseListener(mouseActionListener(this));
-        
+
         playKill.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -61,7 +61,7 @@ public class ProfileView extends JPanel {
 
         addMouseListener(mouseActionListener(this));
     }
-    
+
     private static MouseListener mouseActionListener(ProfileView profileView) {
         return new MouseAdapter() {
             @Override

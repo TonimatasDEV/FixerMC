@@ -5,7 +5,10 @@ import dev.tonimatas.fixermc.Constants;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -23,17 +26,17 @@ public class LibraryInstaller {
     public static void init() {
         int max = LibraryManager.getResources(LibraryManager.Type.LIBRARIES).size();
         List<JarFile> jarFiles = new ArrayList<>();
-        
+
         JProgressBar progressBar = new JProgressBar(0, max);
         JOptionPane optionPane = new JOptionPane(progressBar, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[]{}, null);
         JDialog dialog = optionPane.createDialog("Updating...");
-        
+
         if (!isUpdated()) {
             try {
                 deleteOldLibraries(Constants.PROGRAM_LIBRARIES);
             } catch (IOException ignored) {
             }
-            
+
             new Thread(() -> dialog.setVisible(true)).start();
         }
 
@@ -73,7 +76,7 @@ public class LibraryInstaller {
                 update = true;
             }
         }
-        
+
         setUpdated();
         dialog.dispose();
     }
@@ -97,14 +100,14 @@ public class LibraryInstaller {
             System.out.println("Error on download library: " + jarName);
         }
     }
-    
+
     private static void setUpdated() {
         try {
             Constants.LIBRARY_CHECK_FILE.toFile().createNewFile();
         } catch (IOException ignored) {
         }
     }
-    
+
     private static boolean isUpdated() {
         return Files.exists(Constants.LIBRARY_CHECK_FILE);
     }

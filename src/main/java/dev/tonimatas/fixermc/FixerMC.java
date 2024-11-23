@@ -14,19 +14,6 @@ import java.awt.*;
 public class FixerMC extends JFrame {
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
-    public static void launch() {
-        AccountManager.load();
-        ProfileManager.load();
-
-        try {
-            UIManager.setLookAndFeel(new FlatDarkLaf());
-        } catch (UnsupportedLookAndFeelException e) {
-            throw new RuntimeException(e);
-        }
-        
-        new FixerMC();
-    }
-    
     public FixerMC() {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1000, 600);
@@ -36,5 +23,18 @@ public class FixerMC extends JFrame {
         setJMenuBar(new FixerMenuBar());
         setContentPane(new FixerPanel());
         setVisible(true);
+    }
+
+    public static void launch() {
+        AccountManager.load();
+        ProfileManager.load();
+
+        try {
+            UIManager.setLookAndFeel(new FlatDarkLaf());
+        } catch (UnsupportedLookAndFeelException e) {
+            throw new RuntimeException(e);
+        }
+
+        new FixerMC();
     }
 }

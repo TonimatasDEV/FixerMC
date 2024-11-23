@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
 
 public class FixerMenuBar extends JMenuBar {
     public static JMenu loginMenu;
-    
+
     public FixerMenuBar() {
         loginMenu = new JMenu();
 
@@ -23,17 +23,17 @@ public class FixerMenuBar extends JMenuBar {
 
         add(loginMenu);
     }
-    
+
     private static void resetAccountsView() {
         loginMenu.removeAll();
-        
+
         for (String username : AccountManager.accounts.keySet()) {
             JMenuItem accountItem = new JMenuItem(username, FixerUtils.getImageIcon("steve"));
             loginMenu.add(accountItem);
-            
+
             accountItem.addActionListener(e -> {
-               AccountManager.selectedAccount = accountItem.getText();
-               setLoginTitle();
+                AccountManager.selectedAccount = accountItem.getText();
+                setLoginTitle();
             });
         }
 
@@ -44,10 +44,10 @@ public class FixerMenuBar extends JMenuBar {
         JMenuItem removeAccount = new JMenuItem("Remove...");
         removeAccount.addActionListener(removeAccountAction());
         loginMenu.add(removeAccount);
-        
+
         setLoginTitle();
     }
-    
+
     private static void setLoginTitle() {
         if (AccountManager.selectedAccount.isEmpty()) {
             loginMenu.setText("Login");
@@ -56,7 +56,7 @@ public class FixerMenuBar extends JMenuBar {
             loginMenu.setText(AccountManager.selectedAccount);
         }
     }
-    
+
     private static ActionListener addAccountAction() {
         return e -> {
             int option = JOptionPane.showOptionDialog(null, "Select one account type.", "Add account", JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null, new String[]{"Premium", "No-Premium", "Cancel"}, null);
@@ -82,22 +82,22 @@ public class FixerMenuBar extends JMenuBar {
             resetAccountsView();
         };
     }
-    
+
     private static ActionListener removeAccountAction() {
         return e -> {
             String[] accounts = AccountManager.accounts.keySet().toArray(new String[0]);
             JComboBox<String> accountsBox = new JComboBox<>(accounts);
             int option = JOptionPane.showConfirmDialog(null, accountsBox, "Select the account you want remove", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-            
+
             if (option == JOptionPane.OK_OPTION) {
                 String selectedAccount = (String) accountsBox.getSelectedItem();
-                
+
                 AccountManager.accounts.remove(selectedAccount);
-                
+
                 if (AccountManager.selectedAccount.equals(selectedAccount)) {
                     AccountManager.selectedAccount = AccountManager.accounts.keySet().stream().findFirst().orElse("");
                 }
-                
+
                 AccountManager.save();
                 resetAccountsView();
             }

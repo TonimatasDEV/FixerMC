@@ -33,9 +33,9 @@ public class AccountManager {
 
             for (JsonElement element : jsonFile.get("accounts").getAsJsonArray().asList()) {
                 JsonObject accountJson = element.getAsJsonObject();
-                
+
                 boolean online = accountJson.get("online").getAsBoolean();
-                
+
                 if (online) {
                     StepFullJavaSession.FullJavaSession session = MinecraftAuth.JAVA_DEVICE_CODE_LOGIN.fromJson(accountJson.get("session").getAsJsonObject());
                     accounts.put(session.getMcProfile().getName(), new OnlineAccount(session));
@@ -55,7 +55,7 @@ public class AccountManager {
         jsonFile.addProperty("selectedAccount", selectedAccount);
 
         JsonArray accountsJson = new JsonArray();
-        
+
         for (Account account : accounts.values()) {
             JsonObject accountJson = new JsonObject();
 
@@ -68,7 +68,7 @@ public class AccountManager {
                 accountJson.addProperty("online", false);
                 accountJson.addProperty("name", ((OfflineAccount) account).name());
             }
-            
+
             accountsJson.add(accountJson);
         }
 
@@ -82,7 +82,7 @@ public class AccountManager {
             System.out.println("Error saving accounts.");
         }
     }
-    
+
     public static StepFullJavaSession.FullJavaSession addAccount() {
         HttpClient httpClient = MinecraftAuth.createHttpClient();
         StepFullJavaSession.FullJavaSession javaSession;
@@ -104,7 +104,7 @@ public class AccountManager {
         }
 
         System.out.println("New account added: " + javaSession.getMcProfile().getName());
-        
+
         return javaSession;
     }
 }

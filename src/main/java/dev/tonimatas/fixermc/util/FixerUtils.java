@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 public class FixerUtils {
     public static ImageIcon getImageIcon(String name) {
         URL imageIconURL;
-        
+
         if (Main.developerMode) {
             try {
                 imageIconURL = Paths.get(System.getProperty("user.dir"), "src", "main", "resources", "assets", name + ".png").toUri().toURL();
