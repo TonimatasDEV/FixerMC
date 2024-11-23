@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ProfileManager {
-    public static String selectedProfile = null;
+    public static String selectedProfile = "";
     public static Map<String, Profile> profiles = new HashMap<>();
     public static Map<String, ProfileView> profilesViews = new HashMap<>();
 
@@ -63,7 +63,7 @@ public class ProfileManager {
         try (FileReader reader = new FileReader(Constants.PROFILES_JSON.toFile())) {
             JsonObject jsonFile = JsonParser.parseReader(reader).getAsJsonObject();
 
-            selectedProfile = jsonFile.get("selectedProfile").getAsString();
+            selectedProfile = jsonFile.get("selectedProfile") == null ? "" : jsonFile.get("selectedProfile").getAsString();
 
             for (JsonElement element : jsonFile.get("profiles").getAsJsonArray().asList()) {
                 Profile profile = FixerMC.GSON.fromJson(element, Profile.class);
