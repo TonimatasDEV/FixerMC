@@ -1,7 +1,9 @@
+import dev.polariscore.tasks.CreateTextFile
+import dev.polariscore.tasks.Utils
+
 plugins {
     java
     application
-    id("com.github.johnrengelman.shadow") version "8.0.0"
 }
 
 group = "dev.tonimatas"
@@ -20,7 +22,24 @@ dependencies {
     implementation("com.formdev:flatlaf:3.5.2")
 }
 
+tasks.register<CreateTextFile>("createLibrariesFile") {
+    fileName = "libraries.txt"
+    content = Utils.getDependencies(configurations.implementation.get().copy())
+}
+
+tasks.register<CreateTextFile>("createRepositoriesFile") {
+    fileName = "repositories.txt"
+    content = Utils.getRepositories(repositories)
+}
+
 tasks.processResources {
+    val replaceProperties = mapOf("version" to version)
+    inputs.properties(replaceProperties)
+
+    filesMatching("fixer.properties") {
+        expand(replaceProperties)
+    }
+    
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
@@ -29,9 +48,20 @@ application {
 }
 
 tasks.jar {
+    from(tasks.getByName("createLibrariesFile"))
+    from(tasks.getByName("createRepositoriesFile"))
+
     manifest {
-        attributes["Main-Class"] = "dev.tonimatas.fixermc.Main"
+        attributes(
+            "Launcher-Agent-Class" to "dev.tonimatas.fixermc.Agent",
+            "Agent-Class" to "dev.tonimatas.fixermc.Agent",
+            "Premain-Class" to "dev.tonimatas.fixermc.Agent",
+            "Main-Class" to "dev.tonimatas.fixermc.Main",
+            "Multi-Release" to true
+        )
     }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 tasks.named<JavaExec>("run") {

@@ -21,7 +21,6 @@ public class FixerUtils {
             imageIconURL = FixerUtils.class.getResource("/assets/" + name + ".png");
         }
 
-        System.out.println(imageIconURL);
         if (imageIconURL == null) {
             System.out.println("Error loading icon: " + name);
             return null;

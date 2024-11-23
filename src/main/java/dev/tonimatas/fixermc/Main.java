@@ -1,17 +1,17 @@
 package dev.tonimatas.fixermc;
 
-import fr.theshark34.openlauncherlib.minecraft.GameFolder;
-
-import java.nio.file.Path;
+import dev.tonimatas.fixermc.libraries.LibraryInstaller;
 
 public class Main {
     public static boolean developerMode = false;
-    
+
     public static void main(String[] args) {
         if (args.length >= 1 && args[0].equals("--developer")) {
             developerMode = true;
+        } else {
+            LibraryInstaller.init();
         }
-
+        
         FixerMC.launch();
         
         /*
@@ -33,12 +33,13 @@ public class Main {
             throw new RuntimeException(e);
         }*/
     }
-    
+
+    /*
     public static GameFolder getProfileGameFolder(String profileName) {
         Path profileFolder = Constants.PROFILES_FOLDER.resolve(profileName);
         return new GameFolder(profileFolder.resolve("assets").toString(),
                 profileFolder.resolve("libraries").toString(),
                 profileFolder.resolve("natives").toString(),
                 profileFolder.resolve("client.jar").toString());
-    }
+    }*/
 }

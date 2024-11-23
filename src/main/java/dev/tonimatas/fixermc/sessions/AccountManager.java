@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.tonimatas.fixermc.Constants;
+import dev.tonimatas.fixermc.FixerMC;
 import net.lenni0451.commons.httpclient.HttpClient;
 import net.raphimc.minecraftauth.MinecraftAuth;
 import net.raphimc.minecraftauth.step.java.session.StepFullJavaSession;
@@ -74,7 +75,7 @@ public class AccountManager {
 
         try {
             FileWriter fileWriter = new FileWriter(Constants.ACCOUNTS_JSON.toFile());
-            fileWriter.write(Constants.GSON.toJson(jsonFile));
+            fileWriter.write(FixerMC.GSON.toJson(jsonFile));
             fileWriter.close();
         } catch (IOException e) {
             System.out.println("Error saving accounts.");
