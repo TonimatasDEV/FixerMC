@@ -1,12 +1,27 @@
 package dev.tonimatas.fixermc.util;
 
+import dev.tonimatas.fixermc.Main;
+
 import javax.swing.*;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Paths;
 
 public class FixerUtils {
     public static ImageIcon getImageIcon(String name) {
-        URL imageIconURL = FixerUtils.class.getResource("/assets/icons/" + name + ".png");
+        URL imageIconURL;
+        
+        if (Main.developerMode) {
+            try {
+                imageIconURL = Paths.get(System.getProperty("user.dir"), "src", "main", "resources", "assets", name + ".png").toUri().toURL();
+            } catch (MalformedURLException e) {
+                imageIconURL = null;
+            }
+        } else {
+            imageIconURL = FixerUtils.class.getResource("/assets/" + name + ".png");
+        }
 
+        System.out.println(imageIconURL);
         if (imageIconURL == null) {
             System.out.println("Error loading icon: " + name);
             return null;

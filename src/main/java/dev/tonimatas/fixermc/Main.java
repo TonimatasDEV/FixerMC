@@ -5,9 +5,13 @@ import fr.theshark34.openlauncherlib.minecraft.GameFolder;
 import java.nio.file.Path;
 
 public class Main {
+    public static boolean developerMode = false;
     
-
     public static void main(String[] args) {
+        if (args.length >= 1 && args[0].equals("--developer")) {
+            developerMode = true;
+        }
+
         FixerMC.launch();
         
         /*

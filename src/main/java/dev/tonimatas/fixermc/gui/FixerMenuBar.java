@@ -28,7 +28,7 @@ public class FixerMenuBar extends JMenuBar {
         loginMenu.removeAll();
         
         for (String username : AccountManager.accounts.keySet()) {
-            JMenuItem accountItem = new JMenuItem(username, FixerUtils.getImageIcon("myskin"));
+            JMenuItem accountItem = new JMenuItem(username, FixerUtils.getImageIcon("steve"));
             loginMenu.add(accountItem);
             
             accountItem.addActionListener(e -> {
@@ -52,7 +52,7 @@ public class FixerMenuBar extends JMenuBar {
         if (AccountManager.selectedAccount.isEmpty()) {
             loginMenu.setText("Login");
         } else {
-            loginMenu.setIcon(FixerUtils.getImageIcon("myskin"));
+            loginMenu.setIcon(FixerUtils.getImageIcon("steve"));
             loginMenu.setText(AccountManager.selectedAccount);
         }
     }

@@ -20,6 +20,10 @@ dependencies {
     implementation("com.formdev:flatlaf:3.5.2")
 }
 
+tasks.processResources {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
+
 application {
     mainClass = "dev.tonimatas.fixermc.Main"
 }
@@ -28,4 +32,8 @@ tasks.jar {
     manifest {
         attributes["Main-Class"] = "dev.tonimatas.fixermc.Main"
     }
+}
+
+tasks.named<JavaExec>("run") {
+    args = listOf("--developer")
 }
