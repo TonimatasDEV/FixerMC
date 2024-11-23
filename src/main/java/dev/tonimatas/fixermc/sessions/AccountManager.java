@@ -24,7 +24,7 @@ public class AccountManager {
     public static String selectedAccount = "";
     public static Map<String, Account> accounts = new HashMap<>();
 
-    public static void loadAccounts() {
+    public static void load() {
         if (!Files.exists(Constants.ACCOUNTS_JSON)) return;
         try (FileReader reader = new FileReader(Constants.ACCOUNTS_JSON.toFile())) {
             JsonObject jsonFile = JsonParser.parseReader(reader).getAsJsonObject();
@@ -49,11 +49,13 @@ public class AccountManager {
         }
     }
 
-    public static void saveAccounts() {
+    public static void save() {
         JsonObject jsonFile = new JsonObject();
+        
         jsonFile.addProperty("selectedAccount", selectedAccount);
 
         JsonArray accountsJson = new JsonArray();
+        
         for (Account account : accounts.values()) {
             JsonObject accountJson = new JsonObject();
 
@@ -69,7 +71,6 @@ public class AccountManager {
             
             accountsJson.add(accountJson);
         }
-
 
         jsonFile.add("accounts", accountsJson);
 

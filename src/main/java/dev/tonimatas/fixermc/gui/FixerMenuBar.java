@@ -77,7 +77,7 @@ public class FixerMenuBar extends JMenuBar {
 
             AccountManager.accounts.put(username, account);
             AccountManager.selectedAccount = username;
-            AccountManager.saveAccounts();
+            AccountManager.save();
 
             resetAccountsView();
         };
@@ -98,7 +98,7 @@ public class FixerMenuBar extends JMenuBar {
                     AccountManager.selectedAccount = AccountManager.accounts.keySet().stream().findFirst().orElse("");
                 }
                 
-                AccountManager.saveAccounts();
+                AccountManager.save();
                 resetAccountsView();
             }
         };

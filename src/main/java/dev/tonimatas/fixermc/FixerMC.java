@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dev.tonimatas.fixermc.gui.FixerMenuBar;
 import dev.tonimatas.fixermc.gui.FixerPanel;
+import dev.tonimatas.fixermc.profiles.ProfileManager;
 import dev.tonimatas.fixermc.sessions.AccountManager;
 
 import javax.swing.*;
@@ -14,7 +15,8 @@ public class FixerMC extends JFrame {
     public static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     public static void launch() {
-        AccountManager.loadAccounts();
+        AccountManager.load();
+        ProfileManager.load();
 
         try {
             UIManager.setLookAndFeel(new FlatDarkLaf());

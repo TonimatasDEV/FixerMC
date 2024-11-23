@@ -11,6 +11,7 @@ public class Constants {
     public static final Path PROGRAM_LIBRARIES;
     public static final Path PROFILES_FOLDER;
     public static final Path ACCOUNTS_JSON;
+    public static final Path PROFILES_JSON;
     public static final Path MINECRAFT_FOLDER;
     public static final Path MINECRAFT_LIBRARIES;
     public static final Path MINECRAFT_ASSETS;
@@ -25,6 +26,7 @@ public class Constants {
         PROGRAM_LIBRARIES = PROGRAM_FOLDER.resolve("libraries");
         PROFILES_FOLDER = PROGRAM_FOLDER.resolve("profiles");
         ACCOUNTS_JSON = PROFILES_FOLDER.resolve("accounts.json");
+        PROFILES_JSON = PROFILES_FOLDER.resolve("profiles.json");
         MINECRAFT_FOLDER = PROGRAM_FOLDER.resolve("minecraft");
         MINECRAFT_LIBRARIES = MINECRAFT_FOLDER.resolve("libraries");
         MINECRAFT_ASSETS = MINECRAFT_FOLDER.resolve("assets");
