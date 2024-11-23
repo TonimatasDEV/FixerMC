@@ -2,13 +2,18 @@ package dev.tonimatas.fixermc.libraries;
 
 import dev.tonimatas.fixermc.Agent;
 import dev.tonimatas.fixermc.Constants;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.JarFile;
@@ -16,11 +21,6 @@ import java.util.jar.JarFile;
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class LibraryInstaller {
     public static void init() {
-        try {
-            Files.delete(Constants.PROGRAM_LIBRARIES);
-        } catch (IOException ignored) {
-        }
-
         int max = LibraryManager.getResources(LibraryManager.Type.LIBRARIES).size();
         List<JarFile> jarFiles = new ArrayList<>();
         
@@ -28,7 +28,14 @@ public class LibraryInstaller {
         JOptionPane optionPane = new JOptionPane(progressBar, JOptionPane.INFORMATION_MESSAGE, JOptionPane.DEFAULT_OPTION, null, new Object[]{}, null);
         JDialog dialog = optionPane.createDialog("Updating...");
         
-        if (!isUpdated()) new Thread(() -> dialog.setVisible(true)).start();
+        if (!isUpdated()) {
+            try {
+                deleteOldLibraries(Constants.PROGRAM_LIBRARIES);
+            } catch (IOException ignored) {
+            }
+            
+            new Thread(() -> dialog.setVisible(true)).start();
+        }
 
         boolean update = true;
 
@@ -100,5 +107,21 @@ public class LibraryInstaller {
     
     private static boolean isUpdated() {
         return Files.exists(Constants.LIBRARY_CHECK_FILE);
+    }
+
+    public static void deleteOldLibraries(Path path) throws IOException {
+        Files.walkFileTree(path, new SimpleFileVisitor<>() {
+            @Override
+            public @NotNull FileVisitResult visitFile(Path file, @NotNull BasicFileAttributes attrs) throws IOException {
+                Files.delete(file);
+                return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public @NotNull FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                Files.delete(dir);
+                return FileVisitResult.CONTINUE;
+            }
+        });
     }
 }
