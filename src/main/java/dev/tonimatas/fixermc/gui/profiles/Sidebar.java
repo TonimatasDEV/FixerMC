@@ -4,6 +4,7 @@ import dev.tonimatas.fixermc.profiles.Loader;
 import dev.tonimatas.fixermc.profiles.Profile;
 import dev.tonimatas.fixermc.profiles.ProfileManager;
 import dev.tonimatas.fixermc.profiles.downloader.FixerDownloader;
+import dev.tonimatas.fixermc.util.FixerDialogs;
 
 import javax.swing.*;
 import java.awt.*;
@@ -65,7 +66,7 @@ public class Sidebar extends JPanel {
             options.add(new JLabel("Loader: "));
             options.add(modLoader);
 
-            JComboBox<String> minecraftVersion = new JComboBox<>(FixerDownloader.getMinecraftVersions().toArray(new String[0]));
+            JComboBox<String> minecraftVersion = new JComboBox<>(FixerDownloader.getMinecraftVersionList().toArray(new String[0]));
             minecraftVersion.setEditable(false);
             options.add(new JLabel("MC Version: "));
             options.add(minecraftVersion);
@@ -74,16 +75,16 @@ public class Sidebar extends JPanel {
 
             if (option == 1) {
                 if (name.getText().isEmpty()) {
-                    JOptionPane.showConfirmDialog(null, "You can't create a profile without name.", "Error", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+                    FixerDialogs.showError("You can't create a profile without name.");
                     return;
                 }
 
                 if (ProfileManager.profiles.get(name.getText()) != null) {
-                    JOptionPane.showConfirmDialog(null, "This name is used in another profile.", "Error", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE);
+                    FixerDialogs.showError("This name is used in another profile.");
                     return;
                 }
 
-                Profile profile = new Profile(name.getText(), (String) minecraftVersion.getSelectedItem(), (Loader) modLoader.getSelectedItem(), "");
+                Profile profile = new Profile(name.getText(), (String) minecraftVersion.getSelectedItem(), (Loader) modLoader.getSelectedItem());
                 ProfileManager.profiles.put(profile.name, profile);
                 MainTab.profilesView.resetView();
                 ProfileManager.save();

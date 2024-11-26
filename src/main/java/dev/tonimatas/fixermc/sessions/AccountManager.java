@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.tonimatas.fixermc.Constants;
 import dev.tonimatas.fixermc.FixerMC;
+import dev.tonimatas.fixermc.util.FixerDialogs;
 import net.lenni0451.commons.httpclient.HttpClient;
 import net.raphimc.minecraftauth.MinecraftAuth;
 import net.raphimc.minecraftauth.step.java.session.StepFullJavaSession;
@@ -45,7 +46,7 @@ public class AccountManager {
                 }
             }
         } catch (IOException e) {
-            System.out.println("Error loading accounts.");
+            FixerDialogs.showError("Error loading accounts.");
         }
     }
 
@@ -79,7 +80,7 @@ public class AccountManager {
             fileWriter.write(FixerMC.GSON.toJson(jsonFile));
             fileWriter.close();
         } catch (IOException e) {
-            System.out.println("Error saving accounts.");
+            FixerDialogs.showError("Error saving accounts.");
         }
     }
 
@@ -93,10 +94,10 @@ public class AccountManager {
                         Desktop desktop = Desktop.getDesktop();
                         desktop.browse(new URI(msaDeviceCode.getDirectVerificationUri()));
                     } else {
-                        System.out.println("Desktop not supported.");
+                        FixerDialogs.showError("Desktop not supported.");
                     }
                 } catch (Exception e) {
-                    System.out.println("Error opening direct verification URI.");
+                    FixerDialogs.showError("Error opening direct verification URI.");
                 }
             }));
         } catch (Exception e) {
