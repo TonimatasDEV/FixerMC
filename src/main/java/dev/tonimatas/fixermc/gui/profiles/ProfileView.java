@@ -10,7 +10,7 @@ import java.awt.event.MouseListener;
 
 public class ProfileView extends JPanel {
     public final String profileName;
-    private final JButton playKill;
+    public final JButton playKill;
     public boolean isRunning = false;
 
     public ProfileView(String profile) {
@@ -35,10 +35,18 @@ public class ProfileView extends JPanel {
         profileNameArea.setLineWrap(true);
         add(profileNameArea, gbc);
 
-        playKill = new JButton("Play");
-        playKill.setVisible(false);
+        if (ProfileManager.profiles.get(profileName).downloaded) {
+            playKill = new JButton("Play");
+            playKill.setVisible(false);
+            playKill.setBackground(Color.GREEN.darker().darker());
+        } else {
+
+            playKill = new JButton("Downloading");
+            playKill.setVisible(true);
+            playKill.setBackground(Color.BLUE.brighter());
+        }
+
         playKill.setFont(playKill.getFont().deriveFont(Font.BOLD).deriveFont(16f));
-        playKill.setBackground(Color.GREEN.darker().darker());
         gbc.gridy = 1;
         gbc.weighty = 0.08;
         add(playKill, gbc);

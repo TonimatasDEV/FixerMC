@@ -15,8 +15,10 @@ public class Constants {
     public static final Path MINECRAFT_FOLDER;
     public static final Path MINECRAFT_LIBRARIES;
     public static final Path MINECRAFT_ASSETS;
+    public static final Path MINECRAFT_ASSETS_INDEXES;
     public static final Path MINECRAFT_NATIVES;
     public static final Path MINECRAFT_VERSIONS;
+    public static final String MINECRAFT_RESOURCES;
     public static final String MINECRAFT_VERSION_MANIFEST;
     public static final String VERSION;
     public static final Path LIBRARY_CHECK_FILE;
@@ -25,13 +27,15 @@ public class Constants {
         PROGRAM_FOLDER = Paths.get(System.getProperty("user.home"), "AppData", "Local", "Programs", "FixerMC");
         PROGRAM_LIBRARIES = PROGRAM_FOLDER.resolve("libraries");
         PROFILES_FOLDER = PROGRAM_FOLDER.resolve("profiles");
-        ACCOUNTS_JSON = PROFILES_FOLDER.resolve("accounts.json");
-        PROFILES_JSON = PROFILES_FOLDER.resolve("profiles.json");
+        ACCOUNTS_JSON = PROGRAM_FOLDER.resolve("accounts.json");
+        PROFILES_JSON = PROGRAM_FOLDER.resolve("profiles.json");
         MINECRAFT_FOLDER = PROGRAM_FOLDER.resolve("minecraft");
         MINECRAFT_LIBRARIES = MINECRAFT_FOLDER.resolve("libraries");
         MINECRAFT_ASSETS = MINECRAFT_FOLDER.resolve("assets");
+        MINECRAFT_ASSETS_INDEXES = MINECRAFT_ASSETS.resolve("indexes");
         MINECRAFT_NATIVES = MINECRAFT_FOLDER.resolve("natives");
         MINECRAFT_VERSIONS = MINECRAFT_FOLDER.resolve("versions");
+        MINECRAFT_RESOURCES = "https://resources.download.minecraft.net/";
         MINECRAFT_VERSION_MANIFEST = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
 
         Properties fixerProperties = new Properties();

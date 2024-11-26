@@ -3,8 +3,8 @@ package dev.tonimatas.fixermc.gui.profiles;
 import dev.tonimatas.fixermc.profiles.Loader;
 import dev.tonimatas.fixermc.profiles.Profile;
 import dev.tonimatas.fixermc.profiles.ProfileManager;
-import dev.tonimatas.fixermc.profiles.downloader.FixerDownloader;
 import dev.tonimatas.fixermc.util.FixerDialogs;
+import dev.tonimatas.fixermc.util.MCVersions;
 
 import javax.swing.*;
 import java.awt.*;
@@ -66,7 +66,7 @@ public class Sidebar extends JPanel {
             options.add(new JLabel("Loader: "));
             options.add(modLoader);
 
-            JComboBox<String> minecraftVersion = new JComboBox<>(FixerDownloader.getMinecraftVersionList().toArray(new String[0]));
+            JComboBox<String> minecraftVersion = new JComboBox<>(MCVersions.getMinecraftVersionList().toArray(new String[0]));
             minecraftVersion.setEditable(false);
             options.add(new JLabel("MC Version: "));
             options.add(minecraftVersion);
