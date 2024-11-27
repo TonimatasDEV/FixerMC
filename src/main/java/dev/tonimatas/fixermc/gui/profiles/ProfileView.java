@@ -56,7 +56,7 @@ public class ProfileView extends JPanel {
         profileNameArea.addMouseListener(mouseActionListener(this));
 
         playKill.addActionListener(a -> {
-            Profile updatedProfile = ProfileManager.profiles.get(profileName);
+            if (playKill.getText().equals("Downloading...")) return;
             
             if (playKill.getText().equals("Kill") && process != null) {
                 process.destroy();
@@ -64,12 +64,7 @@ public class ProfileView extends JPanel {
                 return;
             }
 
-            process = updatedProfile.launch();
-            if (!isRunning && process != null) {
-                playKill.setText("Kill");
-                playKill.setBackground(Color.RED.darker());
-                isRunning = true;
-            }
+            launch();
         });
 
         playKill.addMouseListener(new MouseAdapter() {
@@ -82,6 +77,22 @@ public class ProfileView extends JPanel {
         });
 
         addMouseListener(mouseActionListener(this));
+    }
+    
+    public void launch() {
+        Profile updatedProfile = ProfileManager.profiles.get(profileName);
+
+        playKill.setText("Loading...");
+        playKill.setBackground(Color.ORANGE.darker());
+
+        new Thread(() -> {
+            process = updatedProfile.launch();
+            if (!isRunning && process != null) {
+                playKill.setText("Kill");
+                playKill.setBackground(Color.RED.darker());
+                isRunning = true;
+            }
+        }).start();
     }
 
     private static MouseListener mouseActionListener(ProfileView profileView) {
