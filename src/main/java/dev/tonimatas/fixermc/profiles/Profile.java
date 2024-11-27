@@ -10,6 +10,7 @@ import fr.flowarg.flowupdater.versions.VanillaVersion;
 import fr.flowarg.openlauncherlib.NoFramework;
 import fr.theshark34.openlauncherlib.minecraft.GameFolder;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -84,7 +85,18 @@ public class Profile {
 
             process = noFramework.launch(version, loaderVersion, NoFramework.ModLoader.VANILLA);
         } catch (Exception e) {
-            FixerDialogs.showError("Error launching profile: " + e.getMessage());
+            String[] options = {"Setup", "Ignore"};
+            
+            int choice = JOptionPane.showOptionDialog(null, "Missing files.", "Error", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
+            
+            if (choice == 0) {
+                ProfileView view = ProfileManager.profilesViews.get(name);
+                view.playKill.setText("Downloading...");
+                view.playKill.setVisible(true);
+                view.playKill.setBackground(Color.BLUE.brighter());
+                update();
+                view.launch();
+            }
         }
         
         return process;

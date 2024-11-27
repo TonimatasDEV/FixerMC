@@ -93,6 +93,16 @@ public class ProfileView extends JPanel {
                 playKill.setText("Kill");
                 playKill.setBackground(Color.RED.darker());
                 isRunning = true;
+
+                try {
+                    process.waitFor();
+                    playKill.setText("Play");
+                    playKill.setBackground(Color.GREEN.darker().darker());
+                    playKill.setVisible(false);
+                    isRunning = false;
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }).start();
     }
