@@ -16,10 +16,10 @@ repositories {
 sourceSets.main.get().resources.srcDirs("src/main/resources")
 
 dependencies {
+    implementation("fr.flowarg:flowupdater:1.9.2")
     implementation("fr.flowarg:openlauncherlib:3.2.11")
     implementation("net.raphimc:MinecraftAuth:4.1.1")
     implementation("com.formdev:flatlaf:3.5.2")
-    implementation("org.jetbrains:annotations:26.0.1")
 }
 
 tasks.register<CreateTextFile>("createLibrariesFile") {

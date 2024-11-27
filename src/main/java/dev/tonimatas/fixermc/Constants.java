@@ -36,7 +36,7 @@ public class Constants {
         MINECRAFT_NATIVES = MINECRAFT_FOLDER.resolve("natives");
         MINECRAFT_VERSIONS = MINECRAFT_FOLDER.resolve("versions");
         MINECRAFT_RESOURCES = "https://resources.download.minecraft.net/";
-        MINECRAFT_VERSION_MANIFEST = "https://launchermeta.mojang.com/mc/game/version_manifest.json";
+        MINECRAFT_VERSION_MANIFEST = "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json";
 
         Properties fixerProperties = new Properties();
         String versionResult;

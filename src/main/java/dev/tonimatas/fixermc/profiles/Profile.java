@@ -1,13 +1,12 @@
 package dev.tonimatas.fixermc.profiles;
 
-import com.google.gson.JsonObject;
 import dev.tonimatas.fixermc.Constants;
 import dev.tonimatas.fixermc.gui.profiles.ProfileView;
-import dev.tonimatas.fixermc.profiles.downloader.FixerDownloader;
 import dev.tonimatas.fixermc.sessions.AccountManager;
 import dev.tonimatas.fixermc.util.FixerDialogs;
 import dev.tonimatas.fixermc.util.FixerUtils;
-import dev.tonimatas.fixermc.util.MCVersions;
+import fr.flowarg.flowupdater.FlowUpdater;
+import fr.flowarg.flowupdater.versions.VanillaVersion;
 import fr.flowarg.openlauncherlib.NoFramework;
 import fr.theshark34.openlauncherlib.minecraft.GameFolder;
 
@@ -40,24 +39,20 @@ public class Profile {
     }
 
     public void update() {
-        JsonObject minecraftVersion = MCVersions.getMinecraftVersion(version);
-        String versionUrl = minecraftVersion.get("url").getAsString();
-        JsonObject versionJson = FixerUtils.getURLAsJsonObject(versionUrl);
-
-        if (versionJson == null) {
-            FixerDialogs.showError("Error getting the version info. Try again later.\nProfile: " + name);
-            return;
+        VanillaVersion version = new VanillaVersion.VanillaVersionBuilder()
+                .withName(this.version)
+                .build();
+        
+        FlowUpdater updater = new FlowUpdater.FlowUpdaterBuilder().withVanillaVersion(version).build();
+        try {
+            updater.update(Constants.PROFILES_FOLDER.resolve(name));
+            FixerUtils.moveDirectory(Constants.PROFILES_FOLDER.resolve(name).resolve("assets"), Constants.MINECRAFT_ASSETS);
+            FixerUtils.moveDirectory(Constants.PROFILES_FOLDER.resolve(name).resolve("libraries"), Constants.MINECRAFT_LIBRARIES);
+            FixerUtils.moveDirectory(Constants.PROFILES_FOLDER.resolve(name).resolve("natives"), Constants.MINECRAFT_NATIVES.resolve(getCompleteName()));
+        } catch (Exception e) {
+            FixerDialogs.showError("Error downloading the needed files. Try again later.\nProfile: " + name + "\n" + e.getMessage());
         }
-
-        if (!FixerDownloader.downloadLibraries(versionJson.getAsJsonArray("libraries"))) {
-            FixerDialogs.showError("Error downloading libraries. Try again later.\nProfile: " + name);
-            return;
-        }
-
-        if (!FixerDownloader.downloadAssets(versionJson.getAsJsonObject("assetIndex"))) {
-            FixerDialogs.showError("Error downloading libraries. Try again later.\nProfile: " + name);
-            return;
-        }
+        
 
         ProfileView view = ProfileManager.profilesViews.get(name);
 
@@ -74,8 +69,6 @@ public class Profile {
     public Process launch() {
         Process process = null;
 
-        update();
-
         Path gameDir = Constants.PROFILES_FOLDER.resolve(name);
 
         if (!Files.exists(gameDir)) {
@@ -91,7 +84,7 @@ public class Profile {
 
             process = noFramework.launch(version, loaderVersion, NoFramework.ModLoader.VANILLA);
         } catch (Exception e) {
-            FixerDialogs.showError("Error launching profile: " + name);
+            FixerDialogs.showError("Error launching profile: " + e.getMessage());
         }
         
         return process;
@@ -102,7 +95,7 @@ public class Profile {
     }
 
     public Path getClientJar() {
-        return Constants.MINECRAFT_VERSIONS; // TODO
+        return Constants.PROFILES_FOLDER.resolve(name).resolve("client.jar");
     }
 
     public GameFolder getProfileGameFolder() {
@@ -110,5 +103,9 @@ public class Profile {
                 Constants.MINECRAFT_LIBRARIES.toString(),
                 Constants.MINECRAFT_NATIVES.resolve(version).toString(),
                 getClientJar().toString());
+    }
+    
+    private String getCompleteName() {
+        return version + "-" + loaderVersion + "-" +  loader;
     }
 }

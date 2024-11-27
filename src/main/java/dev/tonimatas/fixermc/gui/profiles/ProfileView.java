@@ -57,10 +57,12 @@ public class ProfileView extends JPanel {
 
         playKill.addActionListener(a -> {
             if (playKill.getText().equals("Downloading...")) return;
-            
+
             if (playKill.getText().equals("Kill") && process != null) {
                 process.destroy();
                 isRunning = false;
+                playKill.setText("Play");
+                playKill.setBackground(Color.GREEN.darker().darker());
                 return;
             }
 

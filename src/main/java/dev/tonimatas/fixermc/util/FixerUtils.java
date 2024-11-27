@@ -1,17 +1,22 @@
 package dev.tonimatas.fixermc.util;
 
 import com.google.gson.JsonObject;
-import dev.tonimatas.fixermc.Constants;
 import dev.tonimatas.fixermc.FixerMC;
 import dev.tonimatas.fixermc.Main;
+import dev.tonimatas.fixermc.libraries.LibraryInstaller;
+import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 
 public class FixerUtils {
     public static ImageIcon getImageIcon(String name) {
@@ -62,50 +67,28 @@ public class FixerUtils {
         }
     }
 
-    public static boolean downloadFile(String urlString, Path path, String hash) {
-        try {
-            Files.createDirectories(path.getParent());
-        } catch (IOException e) {
-            System.out.println("Error creating directory: " + path.getParent());
-            return false;
+    public static void moveDirectory(Path source, Path target) throws IOException {
+        if (!Files.exists(target)) {
+            Files.createDirectories(target);
         }
-        
-        if (Files.exists(path) && HashUtils.sha1(path).equals(hash)) {
-            return true;
-        }
-        
-        int tries = 3;
-        
-        for (int i = 0; i < tries; i++) {
-            try {
-                URL url = URI.create(urlString).toURL();
-                URLConnection connection = url.openConnection();
-                
-                connection.connect();
 
-                InputStream inputStream = connection.getInputStream();
-                FileOutputStream outputStream = new FileOutputStream(path.toFile());
-
-                byte[] buffer = new byte[1024];
-                int bytesRead;
-
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, bytesRead);
+        Files.walkFileTree(source, new SimpleFileVisitor<>() {
+            @Override
+            public @NotNull FileVisitResult visitFile(Path file, @NotNull BasicFileAttributes attrs) throws IOException {
+                if (!file.toFile().isDirectory()) {
+                    Path targetPath = target.resolve(source.relativize(file));
+                    Files.createDirectories(targetPath.getParent());
+                    Files.move(file, targetPath, StandardCopyOption.REPLACE_EXISTING);
                 }
-                
-                outputStream.close();
-                return true;
-            } catch (IOException ignored) {
+                return FileVisitResult.CONTINUE;
             }
-        }
-        
-        return false;
-    }
-    
-    public static boolean downloadAsset(String hash) {
-        Path path = Constants.MINECRAFT_ASSETS.resolve("objects").resolve(hash.substring(0, 2)).resolve(hash);
-        String url = Constants.MINECRAFT_RESOURCES + hash.substring(0, 2) + "/" + hash;
-        
-        return downloadFile(url, path, hash);
+
+            @Override
+            public @NotNull FileVisitResult postVisitDirectory(Path dir, IOException exc) {
+                return FileVisitResult.CONTINUE;
+            }
+        });
+
+        LibraryInstaller.deleteOldLibraries(source);
     }
 }
