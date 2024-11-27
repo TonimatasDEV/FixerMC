@@ -37,46 +37,45 @@ public class Profile {
         this.loader = loader;
         this.loaderVersion = loaderVersion;
         this.downloaded = downloaded;
-        update();
     }
 
     public void update() {
-        new Thread(() -> {
-            if (!downloaded) {
-                JsonObject minecraftVersion = MCVersions.getMinecraftVersion(version);
-                String versionUrl = minecraftVersion.get("url").getAsString();
-                JsonObject versionJson = FixerUtils.getURLAsJsonObject(versionUrl);
+        JsonObject minecraftVersion = MCVersions.getMinecraftVersion(version);
+        String versionUrl = minecraftVersion.get("url").getAsString();
+        JsonObject versionJson = FixerUtils.getURLAsJsonObject(versionUrl);
 
-                if (versionJson == null) {
-                    FixerDialogs.showError("Error getting the version info. Try again later.\nProfile: " + name);
-                    return;
-                }
+        if (versionJson == null) {
+            FixerDialogs.showError("Error getting the version info. Try again later.\nProfile: " + name);
+            return;
+        }
 
-                if (!FixerDownloader.downloadLibraries(versionJson.getAsJsonArray("libraries"))) {
-                    FixerDialogs.showError("Error downloading libraries. Try again later.\nProfile: " + name);
-                    return;
-                }
+        if (!FixerDownloader.downloadLibraries(versionJson.getAsJsonArray("libraries"))) {
+            FixerDialogs.showError("Error downloading libraries. Try again later.\nProfile: " + name);
+            return;
+        }
 
-                if (!FixerDownloader.downloadAssets(versionJson.getAsJsonObject("assetIndex"))) {
-                    FixerDialogs.showError("Error downloading libraries. Try again later.\nProfile: " + name);
-                    return;
-                }
+        if (!FixerDownloader.downloadAssets(versionJson.getAsJsonObject("assetIndex"))) {
+            FixerDialogs.showError("Error downloading libraries. Try again later.\nProfile: " + name);
+            return;
+        }
 
-                ProfileView view = ProfileManager.profilesViews.get(name);
-                
-                if (view != null) {
-                    view.playKill.setText("Play");
-                    view.playKill.setVisible(false);
-                    view.playKill.setBackground(Color.GREEN.darker().darker());
-                }
-                
-                downloaded = true;
-                ProfileManager.save();
-            }
-        }).start();
+        ProfileView view = ProfileManager.profilesViews.get(name);
+
+        if (view != null) {
+            view.playKill.setText("Play");
+            view.playKill.setVisible(false);
+            view.playKill.setBackground(Color.GREEN.darker().darker());
+        }
+
+        downloaded = true;
+        ProfileManager.save();
     }
 
-    public void launch() {
+    public Process launch() {
+        Process process = null;
+
+        update();
+
         Path gameDir = Constants.PROFILES_FOLDER.resolve(name);
 
         if (!Files.exists(gameDir)) {
@@ -90,10 +89,12 @@ public class Profile {
         try {
             NoFramework noFramework = new NoFramework(Constants.PROFILES_FOLDER.resolve(name), AccountManager.accounts.get(AccountManager.selectedAccount).getAuthInfos(), getProfileGameFolder());
 
-            noFramework.launch("1.21.3", "", NoFramework.ModLoader.VANILLA);
+            process = noFramework.launch(version, loaderVersion, NoFramework.ModLoader.VANILLA);
         } catch (Exception e) {
             FixerDialogs.showError("Error launching profile: " + name);
         }
+        
+        return process;
     }
 
     public String getText() {

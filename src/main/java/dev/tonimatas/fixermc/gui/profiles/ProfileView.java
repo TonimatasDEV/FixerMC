@@ -1,5 +1,6 @@
 package dev.tonimatas.fixermc.gui.profiles;
 
+import dev.tonimatas.fixermc.profiles.Profile;
 import dev.tonimatas.fixermc.profiles.ProfileManager;
 
 import javax.swing.*;
@@ -12,10 +13,11 @@ public class ProfileView extends JPanel {
     public final String profileName;
     public final JButton playKill;
     public boolean isRunning = false;
+    private Process process;
 
-    public ProfileView(String profile) {
+    public ProfileView(String profileName) {
         super(new GridBagLayout());
-        this.profileName = profile;
+        this.profileName = profileName;
 
         setBackground(Color.BLACK);
         setFocusable(true);
@@ -40,8 +42,8 @@ public class ProfileView extends JPanel {
             playKill.setVisible(false);
             playKill.setBackground(Color.GREEN.darker().darker());
         } else {
-
-            playKill = new JButton("Downloading");
+            new Thread(() -> ProfileManager.profiles.get(profileName).update()).start();
+            playKill = new JButton("Downloading...");
             playKill.setVisible(true);
             playKill.setBackground(Color.BLUE.brighter());
         }
@@ -54,9 +56,20 @@ public class ProfileView extends JPanel {
         profileNameArea.addMouseListener(mouseActionListener(this));
 
         playKill.addActionListener(a -> {
-            playKill.setText("Kill");
-            playKill.setBackground(Color.RED.darker());
-            isRunning = true;
+            Profile updatedProfile = ProfileManager.profiles.get(profileName);
+            
+            if (playKill.getText().equals("Kill") && process != null) {
+                process.destroy();
+                isRunning = false;
+                return;
+            }
+
+            process = updatedProfile.launch();
+            if (!isRunning && process != null) {
+                playKill.setText("Kill");
+                playKill.setBackground(Color.RED.darker());
+                isRunning = true;
+            }
         });
 
         playKill.addMouseListener(new MouseAdapter() {
