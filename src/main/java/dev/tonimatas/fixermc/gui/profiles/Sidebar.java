@@ -63,13 +63,18 @@ public class Sidebar extends JPanel {
     
     private static ActionListener deleteProfileAction() {
         return e -> {
-            boolean delete = FixerDialogs.showConfirm("Delete Profile", "Are you sure you want to delete the profile '{profileName}'? This action cannot be undone.");
+            String profileName = ProfileManager.selectedProfile;
+            ProfileView profileView = ProfileManager.profilesViews.get(profileName);
+            
+            if (profileView.playKill.getText().equals("Downloading...")) {
+                FixerDialogs.showError("The profile cannot be deleted as it is still in the process of downloading.");
+                return;
+            }
+            
+            boolean delete = FixerDialogs.showConfirm("Delete Profile", "Are you sure you want to delete the profile \"" + profileName + "\"? This action cannot be undone.");
             
             if (delete) {
-                String profileName = ProfileManager.selectedProfile;
-                Profile profile = ProfileManager.profiles.get(profileName);
-                
-                profile.delete();
+                ProfileManager.profiles.get(profileName).delete();
 
                 MainTab.profileInfo.textArea.setVisible(false);
                 MainTab.profileInfo.deleteButton.setVisible(false);
