@@ -29,6 +29,9 @@ public class ProfileManager {
         Profile profile = profiles.get(profileView.profileName);
         selectedProfile = profile.name;
         MainTab.profileInfo.resetView(profile);
+        MainTab.profileInfo.deleteButton.setVisible(true);
+        MainTab.profileInfo.textArea.setVisible(true);
+        
 
         for (ProfileView otherProfileView : ProfileManager.profilesViews.values()) {
             if (!otherProfileView.equals(profileView)) {

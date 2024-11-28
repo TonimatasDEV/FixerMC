@@ -11,7 +11,8 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class Sidebar extends JPanel {
-    private final JTextArea textArea;
+    public final JTextArea textArea;
+    public final JButton deleteButton;
 
     public Sidebar() {
         super(new GridBagLayout());
@@ -30,6 +31,7 @@ public class Sidebar extends JPanel {
         textArea = new JTextArea();
         textArea.setEditable(false);
         textArea.setLineWrap(true);
+        textArea.setBorder(null);
 
         if (!ProfileManager.selectedProfile.isBlank()) {
             textArea.setText(ProfileManager.profiles.get(ProfileManager.selectedProfile).getText());
@@ -47,8 +49,32 @@ public class Sidebar extends JPanel {
         gbc.weighty = 0.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(textArea, gbc);
+        
+        deleteButton = new JButton("Delete Profile");
+        gbc.gridy = 3;
+        gbc.weightx = 0.0;
+        gbc.weighty = 0.0;
+        deleteButton.setVisible(false);
+        add(deleteButton, gbc);
 
+        deleteButton.addActionListener(deleteProfileAction());
         createProfile.addActionListener(createProfileAction());
+    }
+    
+    private static ActionListener deleteProfileAction() {
+        return e -> {
+            boolean delete = FixerDialogs.showConfirm("Delete Profile", "Are you sure you want to delete the profile '{profileName}'? This action cannot be undone.");
+            
+            if (delete) {
+                String profileName = ProfileManager.selectedProfile;
+                Profile profile = ProfileManager.profiles.get(profileName);
+                
+                profile.delete();
+
+                MainTab.profileInfo.textArea.setVisible(false);
+                MainTab.profileInfo.deleteButton.setVisible(false);
+            }
+        };
     }
 
     private static ActionListener createProfileAction() {
@@ -60,7 +86,6 @@ public class Sidebar extends JPanel {
             JTextField name = new JTextField();
             options.add(new JLabel("Name: "));
             options.add(name);
-
 
             JComboBox<Loader> modLoader = new JComboBox<>(new Loader[]{Loader.VANILLA});
             options.add(new JLabel("Loader: "));

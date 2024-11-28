@@ -1,7 +1,9 @@
 package dev.tonimatas.fixermc.profiles;
 
 import dev.tonimatas.fixermc.Constants;
+import dev.tonimatas.fixermc.gui.profiles.MainTab;
 import dev.tonimatas.fixermc.gui.profiles.ProfileView;
+import dev.tonimatas.fixermc.libraries.LibraryInstaller;
 import dev.tonimatas.fixermc.sessions.AccountManager;
 import dev.tonimatas.fixermc.util.FixerDialogs;
 import dev.tonimatas.fixermc.util.FixerUtils;
@@ -46,10 +48,12 @@ public class Profile {
         
         FlowUpdater updater = new FlowUpdater.FlowUpdaterBuilder().withVanillaVersion(version).build();
         try {
-            updater.update(Constants.PROFILES_FOLDER.resolve(name));
-            FixerUtils.moveDirectory(Constants.PROFILES_FOLDER.resolve(name).resolve("assets"), Constants.MINECRAFT_ASSETS);
-            FixerUtils.moveDirectory(Constants.PROFILES_FOLDER.resolve(name).resolve("libraries"), Constants.MINECRAFT_LIBRARIES);
-            FixerUtils.moveDirectory(Constants.PROFILES_FOLDER.resolve(name).resolve("natives"), Constants.MINECRAFT_NATIVES.resolve(getCompleteName()));
+            Path profilePath = Constants.PROFILES_FOLDER.resolve(name);
+
+            updater.update(profilePath);
+            FixerUtils.moveDirectory(profilePath.resolve("assets"), Constants.MINECRAFT_ASSETS);
+            FixerUtils.moveDirectory(profilePath.resolve("libraries"), Constants.MINECRAFT_LIBRARIES);
+            FixerUtils.moveDirectory(profilePath.resolve("natives"), Constants.MINECRAFT_NATIVES.resolve(getCompleteName()));
         } catch (Exception e) {
             FixerDialogs.showError("Error downloading the needed files. Try again later.\nProfile: " + name + "\n" + e.getMessage());
         }
@@ -100,6 +104,24 @@ public class Profile {
         }
         
         return process;
+    }
+    
+    public void delete() {
+        try {
+            if (ProfileManager.selectedProfile.equals(name)) {
+                ProfileManager.selectedProfile = "";
+            }
+
+            ProfileManager.profiles.remove(name);
+            ProfileManager.profilesViews.remove(name);
+            ProfileManager.save();
+
+            MainTab.profilesView.resetView();
+            
+            LibraryInstaller.deleteOldLibraries(Constants.PROFILES_FOLDER.resolve(name));
+        } catch (IOException e) {
+            FixerDialogs.showError("Error deleting profile: " + name);
+        }
     }
 
     public String getText() {

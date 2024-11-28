@@ -40,8 +40,7 @@ public class ProfileSelector extends JScrollPane {
         contentPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 15));
         contentPanel.setLayout(new GridLayout(rows, columns, 15, 15));
         contentPanel.setPreferredSize(new Dimension(500, contentHeight));
-        
-        
+
         for (Profile profile : ProfileManager.profiles.values()) {
             if (ProfileManager.profilesViews.get(profile.name) != null) continue;
 
