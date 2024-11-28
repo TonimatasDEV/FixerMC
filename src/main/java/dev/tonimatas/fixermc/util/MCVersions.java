@@ -10,10 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 public class MCVersions {
-    public static JsonObject getMinecraftVersion(String versionId) {
-        return getMinecraftVersions().get(versionId);
-    }
-
     public static List<String> getMinecraftVersionList() {
         return getMinecraftVersions()
                 .values()

@@ -15,10 +15,7 @@ public class Constants {
     public static final Path MINECRAFT_FOLDER;
     public static final Path MINECRAFT_LIBRARIES;
     public static final Path MINECRAFT_ASSETS;
-    public static final Path MINECRAFT_ASSETS_INDEXES;
     public static final Path MINECRAFT_NATIVES;
-    public static final Path MINECRAFT_VERSIONS;
-    public static final String MINECRAFT_RESOURCES;
     public static final String MINECRAFT_VERSION_MANIFEST;
     public static final String VERSION;
     public static final Path LIBRARY_CHECK_FILE;
@@ -32,10 +29,7 @@ public class Constants {
         MINECRAFT_FOLDER = PROGRAM_FOLDER.resolve("minecraft");
         MINECRAFT_LIBRARIES = MINECRAFT_FOLDER.resolve("libraries");
         MINECRAFT_ASSETS = MINECRAFT_FOLDER.resolve("assets");
-        MINECRAFT_ASSETS_INDEXES = MINECRAFT_ASSETS.resolve("indexes");
         MINECRAFT_NATIVES = MINECRAFT_FOLDER.resolve("natives");
-        MINECRAFT_VERSIONS = MINECRAFT_FOLDER.resolve("versions");
-        MINECRAFT_RESOURCES = "https://resources.download.minecraft.net/";
         MINECRAFT_VERSION_MANIFEST = "https://launchermeta.mojang.com/mc/game/version_manifest_v2.json";
 
         Properties fixerProperties = new Properties();
