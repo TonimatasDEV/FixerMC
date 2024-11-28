@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import dev.tonimatas.fixermc.FixerMC;
 import dev.tonimatas.fixermc.Main;
 import dev.tonimatas.fixermc.libraries.LibraryInstaller;
+import fr.flowarg.flowio.FileUtils;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -48,7 +49,7 @@ public class FixerUtils {
         }
         return false;
     }
-    
+
     public static JsonObject getURLAsJsonObject(String urlString) {
         try {
             URL url = new URI(urlString).toURL();
@@ -78,7 +79,12 @@ public class FixerUtils {
                 if (!file.toFile().isDirectory()) {
                     Path targetPath = target.resolve(source.relativize(file));
                     Files.createDirectories(targetPath.getParent());
-                    Files.move(file, targetPath, StandardCopyOption.REPLACE_EXISTING);
+
+                    if (Files.exists(targetPath) && FileUtils.getSHA1(file).equals(FileUtils.getSHA1(targetPath))) {
+                        Files.delete(file);
+                    } else {
+                        Files.move(file, targetPath, StandardCopyOption.REPLACE_EXISTING);
+                    }
                 }
                 return FileVisitResult.CONTINUE;
             }

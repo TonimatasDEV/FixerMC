@@ -26,14 +26,14 @@ public class FixerMC extends JFrame {
     }
 
     public static void launch() {
-        AccountManager.load();
-        ProfileManager.load();
-
         try {
             UIManager.setLookAndFeel(new FlatDarkLaf());
         } catch (UnsupportedLookAndFeelException e) {
             throw new RuntimeException(e);
         }
+
+        AccountManager.load();
+        ProfileManager.load();
 
         new FixerMC();
     }

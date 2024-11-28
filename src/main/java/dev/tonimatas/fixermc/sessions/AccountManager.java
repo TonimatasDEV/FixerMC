@@ -52,7 +52,7 @@ public class AccountManager {
 
     public static void save() {
         JsonObject jsonFile = new JsonObject();
-        
+
         jsonFile.addProperty("selectedAccount", selectedAccount);
 
         JsonArray accountsJson = new JsonArray();

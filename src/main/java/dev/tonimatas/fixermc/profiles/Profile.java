@@ -1,7 +1,6 @@
 package dev.tonimatas.fixermc.profiles;
 
 import dev.tonimatas.fixermc.Constants;
-import dev.tonimatas.fixermc.gui.profiles.MainTab;
 import dev.tonimatas.fixermc.gui.profiles.ProfileView;
 import dev.tonimatas.fixermc.libraries.LibraryInstaller;
 import dev.tonimatas.fixermc.sessions.AccountManager;
@@ -13,7 +12,6 @@ import fr.flowarg.openlauncherlib.NoFramework;
 import fr.theshark34.openlauncherlib.minecraft.GameFolder;
 
 import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -25,14 +23,10 @@ public class Profile {
     public String loaderVersion;
     public boolean downloaded;
 
-    public Profile(String name, String version, Loader loader) {
-        this(name, version, loader, "");
-    }
-    
     public Profile(String name, String version, Loader loader, String loaderVersion) {
         this(name, version, loader, loaderVersion, false);
     }
-    
+
     public Profile(String name, String version, Loader loader, String loaderVersion, boolean downloaded) {
         this.name = name;
         this.version = version;
@@ -42,33 +36,29 @@ public class Profile {
     }
 
     public void update() {
-        VanillaVersion version = new VanillaVersion.VanillaVersionBuilder()
-                .withName(this.version)
-                .build();
-        
-        FlowUpdater updater = new FlowUpdater.FlowUpdaterBuilder().withVanillaVersion(version).build();
-        try {
-            Path profilePath = Constants.PROFILES_FOLDER.resolve(name);
+        new Thread(() -> {
+            getProfileView().changeState(State.DOWNLOADING);
 
-            updater.update(profilePath);
-            FixerUtils.moveDirectory(profilePath.resolve("assets"), Constants.MINECRAFT_ASSETS);
-            FixerUtils.moveDirectory(profilePath.resolve("libraries"), Constants.MINECRAFT_LIBRARIES);
-            FixerUtils.moveDirectory(profilePath.resolve("natives"), Constants.MINECRAFT_NATIVES.resolve(getCompleteName()));
-        } catch (Exception e) {
-            FixerDialogs.showError("Error downloading the needed files. Try again later.\nProfile: " + name + "\n" + e.getMessage());
-        }
-        
+            VanillaVersion version = new VanillaVersion.VanillaVersionBuilder()
+                    .withName(this.version)
+                    .build();
 
-        ProfileView view = ProfileManager.profilesViews.get(name);
+            FlowUpdater updater = new FlowUpdater.FlowUpdaterBuilder().withVanillaVersion(version).build();
+            try {
+                Path profilePath = Constants.PROFILES_FOLDER.resolve(name);
 
-        if (view != null) {
-            view.playKill.setText("Play");
-            view.playKill.setVisible(false);
-            view.playKill.setBackground(Color.GREEN.darker().darker());
-        }
+                updater.update(profilePath);
+                FixerUtils.moveDirectory(profilePath.resolve("assets"), Constants.MINECRAFT_ASSETS);
+                FixerUtils.moveDirectory(profilePath.resolve("libraries"), Constants.MINECRAFT_LIBRARIES);
+                FixerUtils.moveDirectory(profilePath.resolve("natives"), Constants.MINECRAFT_NATIVES.resolve(getCompleteName()));
+            } catch (Exception e) {
+                FixerDialogs.showError("Error downloading the needed files. Try again later.\nProfile: " + name + "\n" + e.getMessage());
+            }
 
-        downloaded = true;
-        ProfileManager.save();
+            getProfileView().changeState(State.NORMAL);
+            downloaded = true;
+            ProfileManager.save();
+        }).start();
     }
 
     public Process launch() {
@@ -90,34 +80,26 @@ public class Profile {
             process = noFramework.launch(version, loaderVersion, NoFramework.ModLoader.VANILLA);
         } catch (Exception e) {
             String[] options = {"Setup", "Ignore"};
-            
+
             int choice = JOptionPane.showOptionDialog(null, "Missing files.", "Error", JOptionPane.DEFAULT_OPTION, JOptionPane.ERROR_MESSAGE, null, options, options[0]);
-            
+
             if (choice == 0) {
-                ProfileView view = ProfileManager.profilesViews.get(name);
-                view.playKill.setText("Downloading...");
-                view.playKill.setVisible(true);
-                view.playKill.setBackground(Color.BLUE.brighter());
+                getProfileView().changeState(State.DOWNLOADING);
                 update();
-                view.launch();
             }
         }
-        
+
         return process;
     }
-    
+
     public void delete() {
+        getProfileView().changeState(State.DELETING);
+
         try {
             if (ProfileManager.selectedProfile.equals(name)) {
                 ProfileManager.selectedProfile = "";
             }
 
-            ProfileManager.profiles.remove(name);
-            ProfileManager.profilesViews.remove(name);
-            ProfileManager.save();
-
-            MainTab.profilesView.resetView();
-            
             LibraryInstaller.deleteOldLibraries(Constants.PROFILES_FOLDER.resolve(name));
         } catch (IOException e) {
             FixerDialogs.showError("Error deleting profile: " + name);
@@ -138,8 +120,12 @@ public class Profile {
                 Constants.MINECRAFT_NATIVES.resolve(version).toString(),
                 getClientJar().toString());
     }
-    
+
     private String getCompleteName() {
-        return version + "-" + loaderVersion + "-" +  loader;
+        return version + "-" + loaderVersion + "-" + loader;
+    }
+
+    private ProfileView getProfileView() {
+        return ProfileManager.profilesViews.get(name);
     }
 }

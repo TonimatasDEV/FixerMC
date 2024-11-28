@@ -6,8 +6,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import dev.tonimatas.fixermc.Constants;
 import dev.tonimatas.fixermc.FixerMC;
-import dev.tonimatas.fixermc.gui.profiles.MainTab;
 import dev.tonimatas.fixermc.gui.profiles.ProfileView;
+import dev.tonimatas.fixermc.gui.profiles.ProfilesTab;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,16 +28,45 @@ public class ProfileManager {
 
         Profile profile = profiles.get(profileView.profileName);
         selectedProfile = profile.name;
-        MainTab.profileInfo.resetView(profile);
-        MainTab.profileInfo.deleteButton.setVisible(true);
-        MainTab.profileInfo.textArea.setVisible(true);
-        
+        ProfilesTab.profileInfo.resetView(profile);
+        ProfilesTab.profileInfo.deleteButton.setVisible(true);
+        ProfilesTab.profileInfo.textArea.setVisible(true);
 
         for (ProfileView otherProfileView : ProfileManager.profilesViews.values()) {
             if (!otherProfileView.equals(profileView)) {
                 otherProfileView.setBorder(null);
             }
         }
+    }
+
+    public static void removeProfile(String profile) {
+        profiles.get(profile).delete();
+
+        profilesViews.remove(profile);
+        profiles.remove(profile);
+
+        ProfilesTab.profileInfo.textArea.setVisible(false);
+        ProfilesTab.profileInfo.deleteButton.setVisible(false);
+        ProfilesTab.profilesView.resetView();
+        ProfileManager.save();
+    }
+
+    private static void addProfile(Profile profile) {
+        profiles.put(profile.name, profile);
+        profilesViews.put(profile.name, new ProfileView(profile.name));
+
+        if (!profile.downloaded) profile.update();
+    }
+
+    public static void createProfile(String name, String version, Loader loader, String loaderVersion) {
+        Profile profile = new Profile(name, version, loader, loaderVersion);
+
+        profiles.put(profile.name, profile);
+        profilesViews.put(profile.name, new ProfileView(profile.name));
+        ProfilesTab.profilesView.resetView();
+        ProfileManager.save();
+
+        profile.update();
     }
 
     public static void save() {
@@ -69,9 +98,7 @@ public class ProfileManager {
             selectedProfile = jsonFile.get("selectedProfile") == null ? "" : jsonFile.get("selectedProfile").getAsString();
 
             for (JsonElement element : jsonFile.get("profiles").getAsJsonArray().asList()) {
-                Profile profile = FixerMC.GSON.fromJson(element, Profile.class);
-
-                profiles.put(profile.name, profile);
+                addProfile(FixerMC.GSON.fromJson(element, Profile.class));
             }
         } catch (IOException e) {
             System.out.println("Error loading profiles.");

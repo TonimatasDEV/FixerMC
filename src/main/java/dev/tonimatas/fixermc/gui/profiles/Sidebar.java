@@ -3,6 +3,7 @@ package dev.tonimatas.fixermc.gui.profiles;
 import dev.tonimatas.fixermc.profiles.Loader;
 import dev.tonimatas.fixermc.profiles.Profile;
 import dev.tonimatas.fixermc.profiles.ProfileManager;
+import dev.tonimatas.fixermc.profiles.State;
 import dev.tonimatas.fixermc.util.FixerDialogs;
 import dev.tonimatas.fixermc.util.MCVersions;
 
@@ -49,7 +50,7 @@ public class Sidebar extends JPanel {
         gbc.weighty = 0.0;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         add(textArea, gbc);
-        
+
         deleteButton = new JButton("Delete Profile");
         gbc.gridy = 3;
         gbc.weightx = 0.0;
@@ -57,27 +58,24 @@ public class Sidebar extends JPanel {
         deleteButton.setVisible(false);
         add(deleteButton, gbc);
 
-        deleteButton.addActionListener(deleteProfileAction());
+        deleteButton.addActionListener(deleteButtonAction());
         createProfile.addActionListener(createProfileAction());
     }
-    
-    private static ActionListener deleteProfileAction() {
+
+    private static ActionListener deleteButtonAction() {
         return e -> {
             String profileName = ProfileManager.selectedProfile;
             ProfileView profileView = ProfileManager.profilesViews.get(profileName);
-            
-            if (profileView.playKill.getText().equals("Downloading...")) {
+
+            if (profileView.state == State.DOWNLOADING) {
                 FixerDialogs.showError("The profile cannot be deleted as it is still in the process of downloading.");
                 return;
             }
-            
-            boolean delete = FixerDialogs.showConfirm("Delete Profile", "Are you sure you want to delete the profile \"" + profileName + "\"? This action cannot be undone.");
-            
-            if (delete) {
-                ProfileManager.profiles.get(profileName).delete();
 
-                MainTab.profileInfo.textArea.setVisible(false);
-                MainTab.profileInfo.deleteButton.setVisible(false);
+            boolean delete = FixerDialogs.showConfirm("Delete Profile", "Are you sure you want to delete the profile \"" + profileName + "\"? This action cannot be undone.");
+
+            if (delete) {
+                ProfileManager.removeProfile(profileName);
             }
         };
     }
@@ -114,10 +112,7 @@ public class Sidebar extends JPanel {
                     return;
                 }
 
-                Profile profile = new Profile(name.getText(), (String) minecraftVersion.getSelectedItem(), (Loader) modLoader.getSelectedItem());
-                ProfileManager.profiles.put(profile.name, profile);
-                MainTab.profilesView.resetView();
-                ProfileManager.save();
+                ProfileManager.createProfile(name.getText(), (String) minecraftVersion.getSelectedItem(), (Loader) modLoader.getSelectedItem(), "");
             }
         };
     }

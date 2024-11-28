@@ -2,6 +2,7 @@ package dev.tonimatas.fixermc.gui.profiles;
 
 import dev.tonimatas.fixermc.profiles.Profile;
 import dev.tonimatas.fixermc.profiles.ProfileManager;
+import dev.tonimatas.fixermc.profiles.State;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,8 +12,8 @@ import java.awt.event.MouseListener;
 
 public class ProfileView extends JPanel {
     public final String profileName;
-    public final JButton playKill;
-    public boolean isRunning = false;
+    public final JButton actionButton;
+    public State state = State.NORMAL;
     private Process process;
 
     public ProfileView(String profileName) {
@@ -37,74 +38,38 @@ public class ProfileView extends JPanel {
         profileNameArea.setLineWrap(true);
         add(profileNameArea, gbc);
 
-        if (ProfileManager.profiles.get(profileName).downloaded) {
-            playKill = new JButton("Play");
-            playKill.setVisible(false);
-            playKill.setBackground(Color.GREEN.darker().darker());
-        } else {
-            new Thread(() -> ProfileManager.profiles.get(profileName).update()).start();
-            playKill = new JButton("Downloading...");
-            playKill.setVisible(true);
-            playKill.setBackground(Color.BLUE.brighter());
-        }
+        actionButton = new JButton();
+        changeState(State.NORMAL);
 
-        playKill.setFont(playKill.getFont().deriveFont(Font.BOLD).deriveFont(16f));
+        actionButton.setFont(actionButton.getFont().deriveFont(Font.BOLD).deriveFont(16f));
         gbc.gridy = 1;
         gbc.weighty = 0.08;
-        add(playKill, gbc);
+        add(actionButton, gbc);
 
-        profileNameArea.addMouseListener(mouseActionListener(this));
 
-        playKill.addActionListener(a -> {
-            if (playKill.getText().equals("Downloading...")) return;
-
-            if (playKill.getText().equals("Kill") && process != null) {
-                process.destroy();
-                isRunning = false;
-                playKill.setText("Play");
-                playKill.setBackground(Color.GREEN.darker().darker());
+        actionButton.addActionListener(a -> {
+            if (state == State.NORMAL) {
+                launch();
                 return;
             }
 
-            launch();
+            if (state == State.RUNNING && process != null) {
+                process.destroy();
+                changeState(State.NORMAL);
+            }
         });
 
-        playKill.addMouseListener(new MouseAdapter() {
+        actionButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseExited(MouseEvent e) {
-                if (ProfileView.this.playKill.getText().equals("Play")) {
-                    playKill.setVisible(false);
+                if (ProfileView.this.state == State.NORMAL) {
+                    actionButton.setVisible(false);
                 }
             }
         });
 
+        profileNameArea.addMouseListener(mouseActionListener(this));
         addMouseListener(mouseActionListener(this));
-    }
-    
-    public void launch() {
-        Profile updatedProfile = ProfileManager.profiles.get(profileName);
-
-        playKill.setText("Loading...");
-        playKill.setBackground(Color.ORANGE.darker());
-
-        new Thread(() -> {
-            process = updatedProfile.launch();
-            if (!isRunning && process != null) {
-                playKill.setText("Kill");
-                playKill.setBackground(Color.RED.darker());
-                isRunning = true;
-
-                try {
-                    process.waitFor();
-                    playKill.setText("Play");
-                    playKill.setBackground(Color.GREEN.darker().darker());
-                    playKill.setVisible(false);
-                    isRunning = false;
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }).start();
     }
 
     private static MouseListener mouseActionListener(ProfileView profileView) {
@@ -116,15 +81,55 @@ public class ProfileView extends JPanel {
 
             @Override
             public void mouseEntered(MouseEvent e) {
-                profileView.playKill.setVisible(true);
+                profileView.actionButton.setVisible(true);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                if (!profileView.playKill.getBounds().contains(e.getPoint()) && profileView.playKill.getText().equals("Play")) {
-                    profileView.playKill.setVisible(false);
+                if (!profileView.actionButton.getBounds().contains(e.getPoint()) && profileView.state == State.NORMAL) {
+                    profileView.actionButton.setVisible(false);
                 }
             }
         };
+    }
+
+    public void changeState(State state) {
+        actionButton.setText(state.title);
+        actionButton.setBackground(state.color);
+        this.state = state;
+
+        if (state.alwaysVisible) actionButton.setVisible(true);
+        
+        if (state == State.NORMAL) {
+            Point mousePos = getMousePosition();
+
+            if (mousePos != null) {
+                actionButton.setVisible(actionButton.getBounds().contains(mousePos));
+            }
+
+            actionButton.setVisible(false);
+        }
+    }
+
+    public void launch() {
+        changeState(State.LOADING);
+
+        new Thread(() -> {
+            process = getProfile().launch();
+            if (state != State.RUNNING && process != null) {
+                changeState(State.RUNNING);
+
+                try {
+                    process.waitFor();
+                    changeState(State.NORMAL);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }).start();
+    }
+
+    private Profile getProfile() {
+        return ProfileManager.profiles.get(profileName);
     }
 }
